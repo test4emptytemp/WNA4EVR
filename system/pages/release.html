@@ -219,19 +219,20 @@ footer { text-align: center; padding: 2rem; color: #777; }
    this page needs to change.
 
    Expected doGet() response shape — one array per column, values ordered
-   oldest → newest (the LAST entry in every array is always "latest"):
+   oldest → newest (the LAST entry in every array is always "latest").
+   Matches the companion release-feed.gs Apps Script, whose row 1 headers
+   are: version | url | info | zip download name
      {
-       "version":     ["v0.8.2", "v0.8.3", "v0.8.4"],
-       "downloadUrl": ["https://.../v082.zip", "https://.../v083.zip", "https://.../v084.zip"],
-       "notes":       ["Initial build", "Bugfixes", "Added dark mode\nFixed crash on load"],
-       "filename":    ["wannasmile-v082.zip", "wannasmile-v083.zip", "wannasmile-v084.zip"]  // optional
+       "version":             ["v0.8.2", "v0.8.3", "v0.8.4"],
+       "url":                 ["https://.../v082.zip", "https://.../v083.zip", "https://.../v084.zip"],
+       "info":                ["Initial build", "Bugfixes", "Added dark mode\nFixed crash on load"],
+       "zip download name":   ["wannasmile-v082.zip", "wannasmile-v083.zip", "wannasmile-v084.zip"]
      }
    Column headers are matched case/punctuation-insensitively (see
-   findColumn), so "Download URL", "download_url", "DownloadUrl" etc. all
-   work. Only "downloadUrl" (or a header containing "download"/"url"/"link")
-   is required — version/notes/filename are optional and just improve the
-   display. "notes" supports multiple lines (\n) which render as separate
-   bullet points. ================= */
+   findColumn), so "Download URL", "download_url", "Info", "ZIP Download
+   Name" etc. all resolve correctly. Only a url-like column is required —
+   version/info/filename just improve the display. "info" supports
+   multiple lines (\n) which render as separate bullet points. ================= */
 const SHEET_API_URL = "https://script.google.com/macros/s/AKfycbw3P0APtsndfuzYvpNFyVzMUnGoPr_29tvSGbTz5crC6pzAvj_3hsckHiKdca-rNWVfuw/exec";
 const SUPPORT_URL   = "https://www.youtube.com/@mcmattyobriore";
 const SOURCE_URL    = "https://github.com/test4emptytemp/test4emptytemp.github.io";
@@ -309,7 +310,7 @@ async function fetchReleaseRows() {
 
   const versions  = findColumn(data, ["version", "ver"]);
   const links     = findColumn(data, ["downloadurl", "download", "url", "link"]);
-  const notes     = findColumn(data, ["notes", "changelog", "message"]);
+  const notes     = findColumn(data, ["notes", "info", "changelog", "message", "description"]);
   const filenames = findColumn(data, ["filename", "file", "name"]);
 
   if (!links.length) {
